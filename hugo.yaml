@@ -23,7 +23,7 @@ languages:
   en:
     languageCode: en
     languageName: English
-    title: "John's Blog"
+    title: "IngeniumMX's Blog"
     weight: 1
   bn:
     languageCode: bn
