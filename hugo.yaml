@@ -1,7 +1,7 @@
 baseURL: https://ingeniummx.github.io
 
-languageCode: bn
-title: "John's Blog"
+languageCode: en
+title: "IngeniumMX's Blog"
 
 # Use Hugo modules to add theme
 module:
