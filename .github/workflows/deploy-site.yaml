@@ -1,49 +1,44 @@
 name: Deploy to Github Pages
 
+# run when a commit is pushed to "source" branch
 on:
   push:
-    branches: [ main ]
-
-permissions:
-  contents: write   # <-- necesario para pushear a gh-pages
+    branches:
+    - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: true
+    # checkout to the commit that has been pushed
+    - uses: actions/checkout@v4
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: 'latest'
-          extended: true
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v3
+      with:
+        hugo-version: 'latest'
+        extended: true
 
-      - name: Update Hugo Modules
-        run: hugo mod tidy
+    - name: Update Hugo Modules
+      run: hugo mod tidy
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
 
-      - name: Install node modules
-        run: |
-          hugo mod npm pack
-          npm ci
+    - name: Install node modules
+      run: |
+        hugo mod npm pack
+        npm install
 
-      - name: Build
-        run: hugo --minify
+    - name: Build
+      run: hugo --minify
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4.0.0
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: gh-pages
-          force_orphan: true   # <-- recrea la rama aunque no exista
+    # push the generated content into the `gh-pages` branch.
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: ./public
