@@ -1,9 +1,8 @@
 # Información sobre el proyecto
 name: "Ingenium Mx"
-nickname: "Ingenium"
-greeting: "Bienvenido a"
-image: "images/author/jhon.png"
-
+nickname: "Ingenium Mx"
+greeting: ""
+image: "images/author/logo2.png"
 # Información de contacto
 contactInfo:
   email: "ingenium.mex01@gmail.com"
