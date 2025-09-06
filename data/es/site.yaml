@@ -1,0 +1,27 @@
+# Aviso de derechos de autor
+copyright: "© 2025 Ingenium Mx. Todos los derechos reservados."
+
+# Aviso legal para el pie de página.
+# Asegúrate de haber configurado "params.footer.disclaimer.enable: true" en tu archivo `config.yaml`.
+disclaimer: >
+  Este sitio web fue desarrollado con el tema Toha Hugo (licencia MIT).
+  Ingenium Mx es el único responsable de su contenido.
+  El autor del tema no ofrece garantías ni asume responsabilidad por su uso.
+
+# Meta descripción (SEO)
+description: "Ingenium Mx – Aprende, construye, crea. Un espacio dedicado a proyectos de ingeniería, ciencia, tecnología, mecatrónica, robótica, electrónica, programación."
+
+# Menús personalizados de la barra superior
+customMenus:
+  - name: Documentación
+    url: https://toha-guides.netlify.app/posts/
+    hideFromNavbar: false
+    showOnFooter: false
+
+# OpenGraph (vistas previas en redes sociales)
+openGraph:
+  title: "Ingenium Mx – Aprende, construye, crea"
+  type: website
+  description: "Ingenium Mx – Aprende, construye, crea. Comunidad de innovación en ingeniería, tecnología, mecatrónica, robótica, electrónica, programación y ciencia."
+  image: images/author/logo.png
+  url: https://ingeniummx.github.io

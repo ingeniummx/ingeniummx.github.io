@@ -1,0 +1,21 @@
+/* --- IngeniumMX overrides --- */
+
+/* Quitar blur/escala del fondo en Home/Landing (Toha) */
+.home .background,
+.home .background::before,
+.home .background::after,
+.landing .background,
+.landing .background::before,
+.landing .background::after,
+.banner .background,
+.banner .background::before,
+.banner .background::after,
+.cover .background,
+.cover .background::before,
+.cover .background::after {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+}

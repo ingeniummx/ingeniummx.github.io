@@ -1,0 +1,77 @@
+# Información de la sección
+section:
+  name: Acerca de
+  id: about
+  enable: true
+  weight: 1
+  showOnNavbar: true
+  template: sections/about.html
+
+# # Designación
+# designation: Me gusta compartir y crear nuevas cosas
+
+# # Información del proyecto
+# company:
+#   name: Ingenium Mx
+#   url: "https://ingeniummx.github.io"
+
+# Resumen
+summary: >
+  Ingenium Mx es mi espacio como maker para compartir los proyectos que ire desarrollando en temas relacionados con ingeniería, mecatrónica, robótica,
+  electrónica, programación, tecnología y ciencia, con el objetivo de enseñar y ayudar
+  a quienes quieran aprender.
+
+# Enlaces sociales
+socialLinks:
+- name: Email
+  icon: "fas fa-envelope"
+  url: "contacto@ingeniummx.org"
+
+- name: Github
+  icon: "fab fa-github"
+  url: "https://github.com/ingeniummx"
+
+- name: LinkedIn
+  icon: "fab fa-linkedin"
+  url: "https://linkedin.com/company/ingenium-mx"
+
+- name: Instagram
+  icon: "fab fa-instagram"
+  url: "https://instagram.com/ingenium.mx"
+
+- name: YouTube
+  icon: "fab fa-youtube"
+  url: "https://youtube.com/@ingenium-mx"
+
+# Indicadores de temas tratados
+badges:
+- type: soft-skill-indicator
+  name: Diseño CAD e Impresión 3D
+  percentage: 100
+  color: "#007bff"
+
+- type: soft-skill-indicator
+  name: Electrónica
+  percentage: 100
+  color: "#28a745"
+
+- type: soft-skill-indicator
+  name: Programación
+  percentage: 100
+  color: "#ffc107"
+
+- type: soft-skill-indicator
+  name: Control y Automatización
+  percentage: 100
+  color: "#dc3545"
+
+- type: soft-skill-indicator
+  name: Robótica
+  percentage: 100
+  color: "#6f42c1"
+
+- type: soft-skill-indicator
+  name: Ciencia y Tecnología
+  percentage: 100
+  color: "#17a2b8"
+
