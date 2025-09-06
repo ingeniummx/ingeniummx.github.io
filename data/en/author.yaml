@@ -1,21 +1,19 @@
-# some information about you
-name: "John Doe"
-nickname: "John"
-# greeting message before your name. it will default to "Hi! I am" if not provided
-greeting: "Hi, I am"
-image: "images/author/john.png"
-# give your some contact information. they will be used in the footer
-contactInfo:
-  email: "johndoe@example.com"
-  phone: "+0123456789"
-  github: johndoe
-  linkedin: johndoe
-  researchgate: john-doe
+# Información sobre el proyecto
+name: "Ingenium Mx"
+nickname: "Ingenium"
+greeting: "Bienvenido a"
+image: "images/author/logo.png"
 
-# some summary about what you do
+# Información de contacto
+contactInfo:
+  email: "ingenium.mex01@gmail.com"
+  github: ingeniummx
+  linkedin: ingenium-mx
+  instagram: ingenium.mx
+  youtube: ingenium-mx
+
+# Resumen sobre lo que hacemos
 summary:
-  - I am a Developer
-  - I am a Devops
-  - I love servers
-  - I work on open-source projects
-  - I love to work with some fun projects
+  - Comunidad maker para aprender y crear
+  - Ingeniería, robótica, electrónica y programación
+  - Tutoriales, guías y recursos gratuitos
