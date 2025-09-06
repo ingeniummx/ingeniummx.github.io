@@ -5,61 +5,77 @@ section:
   enable: true
   weight: 5
   showOnNavbar: true
-  # Can optionally hide the title in sections
-  # hideTitle: true
 
-# filter buttons
+# filter buttons (los valores "filter" deben aparecer en tags)
 buttons:
-- name: All
+- name: Todos
   filter: "all"
-- name: Professional
-  filter: "professional"
-- name: Academic
-  filter: "academic"
-- name: Hobby
-  filter: "hobby"
+- name: Robótica & Mecatrónica
+  filter: "robotica"
+- name: IoT
+  filter: "iot"
+- name: Arte/Interacción
+  filter: "arte"
+- name: Educación
+  filter: "educacion"
 
 # your projects
 projects:
-- name: Kubernetes
-  logo: /images/sections/projects/kubernetes.png
-  role: Contributor
-  timeline: "March 2018 - Present"
-  repo: https://github.com/kubernetes/kubernetes # If your project is a public repo on GitHub, then provide this link. it will show star count.
-  #url: ""  # If your project is not a public repo but it has a website or any external details url then provide it here. don't provide "repo" and "url" simultaneously.
-  summary: Production-Grade Container Scheduling and Management.
-  tags: ["professional", "kubernetes", "cloud"]
+- name: Mesa de Arena (Sand Drawing Table)
+  logo: /images/sections/projects/sand-table.png
+  image: /images/sections/projects/sand-table_cover.png
+  role: Diseño/Construcción
+  timeline: "2025"
+  # repo: https://github.com/ingeniummx/sand-drawing-table
+  # url: /projects/sand-drawing-table/
+  summary: Mesa cinética que dibuja patrones en arena; mecánica compacta, control por firmware y generación de trayectorias.
+  tags: ["robotica","mecatronica","arte","impresion3d"]
 
-- name: Tensorflow
-  logo: /images/sections/projects/tensorflow.png
-  role: Developer
-  timeline: "Jun 2018 - Present"
-  repo: https://github.com/tensorflow/tensorflow
-  #url: ""
-  summary: An Open Source Machine Learning Framework for Everyone.
-  tags: ["professional", "machine-learning"]
+- name: Arpa Láser Compacta (ESP32)
+  logo: /images/sections/projects/laser-harp.png
+  image: /images/sections/projects/laser-harp_cover.png
+  role: Electrónica/Firmware
+  timeline: "2025"
+  # repo: https://github.com/ingeniummx/laser-harp
+  # url: /projects/laser-harp/
+  summary: Arpa con haces láser y LDRs, ESP32, PCB delgada y powerbank integrada; carcasa imprimible en 3D.
+  tags: ["iot","electronica","arte","esp32"]
 
-- name: A sample academic paper
-  role: Team Lead
-  timeline: "Jan 2017 - Nov 2017"
-  url: "https://www.example.com"
-  summary: Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente eius reprehenderit animi suscipit autem eligendi esse amet aliquid error eum. Accusantium distinctio soluta aliquid quas placeat modi suscipit eligendi nisi.
-  tags: ["academic","iot"]
+- name: Medidor de Altura para el Hogar
+  logo: /images/sections/projects/home-height.png
+  image: /images/sections/projects/home-height_cover.png
+  role: Producto/Enclosure
+  timeline: "2025"
+  # repo: https://github.com/ingeniummx/home-height-meter
+  # url: /projects/home-height-meter/
+  summary: Dispositivo de pared con sensor ToF, display e integración IoT para registrar mediciones familiares.
+  tags: ["iot","electronica","hogar","impresion3d"]
 
-- name: Nocode
-  logo: /images/sections/projects/no-code.png
-  role: Nothing
-  timeline: "Oct 2019 - Dec 2019"
-  repo: https://github.com/kelseyhightower/nocode
-  #url: ""
-  summary: The best way to write secure and reliable applications. Write nothing; deploy nowhere.
-  tags: ["hobby", "fun"]
+- name: Plataforma Móvil Modular Académica
+  logo: /images/sections/projects/modular-robot.png
+  image: /images/sections/projects/modular-robot_cover.png
+  role: Arquitectura/ROS
+  timeline: "2025"
+  # repo: https://github.com/ingeniummx/modular-mobile-robot
+  # url: /projects/modular-mobile-robot/
+  summary: Robot modular compatible con 2–6 motores y múltiples configuraciones (diferencial, Kermann, omni); Jetson/RPi como módulos.
+  tags: ["robotica","mecatronica","modular","ros2","academico"]
 
-- name: Toha
-  logo: /images/sections/projects/toha.png
-  image: /images/sections/projects/toha_website.png
-  role: Owner
-  timeline: "Jun 2019 - Present"
-  repo: https://github.com/hossainemruz/toha
-  summary: A Hugo theme for personal portfolio.
-  tags: ["hobby","hugo","theme","professional"]
+- name: Hydra Mate — Botella Inteligente
+  logo: /images/sections/projects/hydra-mate.png
+  image: /images/sections/projects/hydra-mate_cover.png
+  role: IoT/Producto
+  timeline: "2025"
+  # repo: https://github.com/ingeniummx/hydra-mate
+  # url: /projects/hydra-mate/
+  summary: Botella con sensado de consumo, notificaciones y app; electrónica low-power y diseño de carcasa.
+  tags: ["iot","electronica","salud","producto"]
+
+- name: Kits Educativos & Voluntariado
+  logo: /images/sections/projects/edu-kits.png
+  image: /images/sections/projects/edu-kits_cover.png
+  role: Diseño curricular
+  timeline: "2025"
+  # url: /projects/edu-kits/
+  summary: Desarrollo de kits didácticos y colaboración con iniciativas tipo SharePlus para llevar STEM a más niños.
+  tags: ["educacion","kit","electronica","robotica"]
