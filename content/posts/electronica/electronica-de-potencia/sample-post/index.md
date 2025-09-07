@@ -1,13 +1,13 @@
 ---
-title: "Rich Content"
+title: "Sample Post"
 date: 2020-06-08T08:06:25+06:00
 description: Sample post with multiple images, embedded video etc.
 menu:
   sidebar:
-    name: Rich Content
-    identifier: rich-content
-    parent: sub-category
-    weight: 10
+    name: Sample Post
+    identifier: sample-post
+    parent: electronica-de-potencia
+    weight: 1
 hero: images/forest.jpg
 tags:
 - Markdown
