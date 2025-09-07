@@ -17,27 +17,26 @@ section:
 
 # Resumen
 summary: >
-  Ingenium Mx es mi espacio como maker para compartir proyectos que ire desarrollando en temas relacionados con ingeniería, mecatrónica, robótica,
-  electrónica, programación, tecnología y ciencia, con el objetivo de enseñar y ayudar
-  a quienes quieran aprender.
+  Ingenium MX es un espacio donde busco compartir mis proyectos como maker en áreas como ingeniería, mecatrónica, robótica, 
+  electrónica y programación. Aquí busco inspirar, enseñar y acompañar a quienes deseen aprender y construir sus propias ideas.
 
 # Enlaces sociales
 socialLinks:
 - name: Email
   icon: "fas fa-envelope"
-  url: "contacto@ingeniummx.org"
+  url: "ingenium.mex01@gmail.com"
 
 - name: Github
   icon: "fab fa-github"
   url: "https://github.com/ingeniummx"
 
-- name: LinkedIn
-  icon: "fab fa-linkedin"
-  url: "https://linkedin.com/company/ingenium-mx"
+# - name: LinkedIn
+#   icon: "fab fa-linkedin"
+#   url: "https://linkedin.com/company/ingenium-mx"
 
 - name: Instagram
   icon: "fab fa-instagram"
-  url: "https://instagram.com/ingenium.mx"
+  url: "https://www.instagram.com/ingeniummx"
 
 - name: YouTube
   icon: "fab fa-youtube"

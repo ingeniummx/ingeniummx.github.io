@@ -20,9 +20,17 @@
   transform: none !important;
 }
 
-
-
+/* Escalar botón Buy Me a Coffee */
 #bmc-wbtn {
   transform: scale(0.6) !important;
   transform-origin: bottom right !important;
+}
+
+/* Ajustar cuadro de texto Buy Me a Coffee */
+#bmc-wbtn + div {
+  right: 70px !important;       /* acercar al botón */
+  font-size: 14px !important;   /* letra más chica */
+  padding: 12px !important;     /* menos padding */
+  max-width: 220px !important;  /* más compacto */
+  line-height: 1.4 !important;  /* texto más cerrado */
 }

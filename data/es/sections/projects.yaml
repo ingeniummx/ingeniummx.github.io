@@ -61,21 +61,3 @@ projects:
   summary: Robot modular compatible con 2–6 motores y múltiples configuraciones (diferencial, Kermann, omni); Jetson/RPi como módulos.
   tags: ["robotica","mecatronica","modular","ros2","academico"]
 
-- name: Hydra Mate — Botella Inteligente
-  logo: /images/sections/projects/hydra-mate.png
-  image: /images/sections/projects/hydra-mate_cover.png
-  role: IoT/Producto
-  timeline: "2025"
-  # repo: https://github.com/ingeniummx/hydra-mate
-  # url: /projects/hydra-mate/
-  summary: Botella con sensado de consumo, notificaciones y app; electrónica low-power y diseño de carcasa.
-  tags: ["iot","electronica","salud","producto"]
-
-- name: Kits Educativos & Voluntariado
-  logo: /images/sections/projects/edu-kits.png
-  image: /images/sections/projects/edu-kits_cover.png
-  role: Diseño curricular
-  timeline: "2025"
-  # url: /projects/edu-kits/
-  summary: Desarrollo de kits didácticos y colaboración con iniciativas tipo SharePlus para llevar STEM a más niños.
-  tags: ["educacion","kit","electronica","robotica"]
