@@ -8,9 +8,6 @@ menu:
     identifier: circuito-antirrebote
     parent: electronica
     weight: 2
-author:
-  name: Ingenium MX
-  image: images/author/ingenium.png
 hero: images/circuito-antirrebote-cover.jpg
 tags:
 - Pulsadores
