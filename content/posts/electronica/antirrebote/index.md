@@ -18,6 +18,7 @@ tags:
 categories:
 - Electrónica
 - Básico
+math: true
 
 Los **pulsadores**, **switches** y **relés** están en todos lados.  
 Cuando los conectamos a un microcontrolador (PIC, ESP32, Arduino, etc.) esperamos un **cambio de estado limpio** por cada pulsación. En la práctica no ocurre así: los contactos mecánicos **rebotan** durante unos milisegundos y generan **varias transiciones** antes de estabilizarse. A esto se le llama **rebote de contacto** (*contact bounce*).
@@ -151,7 +152,6 @@ void loop() {
 
 ## Conclusión y recomendaciones (en 8 puntos)
 
-1) **Usa RC** si la entrada va a **interrupciones** o el entorno es **ruidoso**.  
 2) **Usa `millis()`** si no quieres tocar la PCB.  
 3) **Combina ambos** (RC moderado + `millis()`) para producto **robusto**.  
 4) **Valores de arranque:** RC **100 kΩ + 47 nF** (≈5τ = 23.5 ms), `debounceMs` **35 ms**.  
