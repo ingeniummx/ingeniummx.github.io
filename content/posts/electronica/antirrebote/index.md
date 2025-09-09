@@ -146,3 +146,16 @@ void loop() {
 ```
 
 > **Tip:** si usas **interrupciones**, es mejor llevar al pin de IRQ una **señal ya filtrada por RC** y, en la ISR, solo detectar el **flanco**.
+
+
+
+## Conclusión y recomendaciones (en 8 puntos)
+
+1) **Usa RC** si la entrada va a **interrupciones** o el entorno es **ruidoso**.  
+2) **Usa `millis()`** si no quieres tocar la PCB.  
+3) **Combina ambos** (RC moderado + `millis()`) para producto **robusto**.  
+4) **Valores de arranque:** RC **100 kΩ + 47 nF** (≈5τ = 23.5 ms), `debounceMs` **35 ms**.  
+5) **Mide** el rebote con osciloscopio; si no, diseña para **~20 ms** y ajusta.  
+6) **Evita `delay()`**; usa ventana **no bloqueante** con `millis()` o FSM.  
+7) En PCB, deja **pads DNF** para R/C y pon el **C cerca del pin** (retorno GND corto).  
+8) Si usas **IRQ**, filtra **antes** con RC y en la ISR solo detecta el **flanco**.
