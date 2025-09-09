@@ -1,13 +1,16 @@
 ---
 title: "¿Qué es un circuito antirrebote?"
 date: 2025-09-09T10:00:00+02:00
-description: "Qué es el rebote en pulsadores, cómo medirlo y cómo eliminarlo con un filtro RC y una máquina de estados con millis() en microcontroladores."
+description: "Qué es el rebote en pulsadores y cómo eliminarlo con un filtro RC y una máquina de estados con millis() en microcontroladores."
 menu:
   sidebar:
     name: ¿Qué es un circuito antirrebote?
     identifier: circuito-antirrebote
     parent: electronica
     weight: 2
+author:
+  name: Ingenium MX
+  image: images/author/ingenium.png
 hero: images/circuito-antirrebote-cover.jpg
 tags:
 - Pulsadores
@@ -25,35 +28,40 @@ Los **pulsadores**, **switches** y **relés** están en todos lados.
 Cuando los conectamos a un microcontrolador (PIC, ESP32, Arduino, etc.) esperamos un **cambio de estado limpio** por cada pulsación. En la práctica no ocurre así: los contactos mecánicos **rebotan** durante unos milisegundos y generan **varias transiciones** antes de estabilizarse. A esto se le llama **rebote de contacto** (*contact bounce*).
 
 <div style="text-align:center; margin: 1em 0;">
-  <img src="images/button-ideal-vs-bounce.png" alt="Señal ideal vs señal con rebote" style="max-width:80%;">
+  <div style="border:2px dashed #bbb; padding:28px; width:80%; height:220px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;">
+    <strong>PLACEHOLDER IMG:</strong>&nbsp; "button-ideal-vs-bounce.png" — Señal ideal vs con rebote
+  </div>
   <p><em>Ideal vs. real: sin rebote (arriba) vs. con rebote (abajo)</em></p>
 </div>
 
 En aplicaciones lentas (encender una lámpara) el rebote pasa desapercibido.  
-En **sistemas digitales** (contadores, menús, teclados) se transforma en **pulsaciones falsas**.
+En **sistemas digitales** (contadores, menús, teclados) puede convertirse en **pulsaciones falsas**.
 
 ---
 
 ## ¿Por qué rebotan los contactos?
 
-Por **masa, elasticidad y vibración** de las piezas metálicas. Al impactar, los contactos se separan y vuelven a tocar varias veces en pocos milisegundos. El rebote aparece **al presionar y al soltar**.  
-Duración típica: **1–20 ms** (varía con tipo/calidad, desgaste, humedad, temperatura).
+Por **masa, elasticidad y vibración** de las piezas metálicas. Al presionar o soltar, los contactos **no** se quedan quietos al primer intento: golpean y “tiemblan” durante **1–20 ms** (depende de tipo/calidad, desgaste, humedad, temperatura).
 
 ---
 
 ## Pull-up vs Pull-down (y dónde aparece el rebote)
 
-Para leer un push button hay dos conexiones típicas:
+Hay dos formas comunes de cablear un botón:
 
-- **Pull-up:** el pin está en `1` (resistencia a Vcc). Al **presionar**, cae a `0`.
+- **Pull-up:** el pin está en `1` por defecto (resistencia a Vcc). Al **presionar**, cae a `0`.
   <div style="text-align:center; margin: 1em 0;">
-    <img src="images/button-pullup-bounce.png" alt="Pulsador con pull-up" style="max-width:80%;">
+    <div style="border:2px dashed #bbb; padding:28px; width:80%; height:200px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;">
+      <strong>PLACEHOLDER IMG:</strong>&nbsp; "button-pullup-bounce.png" — Esquema + forma de onda (alto→bajo con rebote)
+    </div>
     <p><em>Pull-up: rebote al ir de alto a bajo</em></p>
   </div>
 
-- **Pull-down:** el pin está en `0` (resistencia a GND). Al **presionar**, sube a `1`.
+- **Pull-down:** el pin está en `0` por defecto (resistencia a GND). Al **presionar**, sube a `1`.
   <div style="text-align:center; margin: 1em 0;">
-    <img src="images/button-pulldown-bounce.png" alt="Pulsador con pull-down" style="max-width:80%;">
+    <div style="border:2px dashed #bbb; padding:28px; width:80%; height:200px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;">
+      <strong>PLACEHOLDER IMG:</strong>&nbsp; "button-pulldown-bounce.png" — Esquema + forma de onda (bajo→alto con rebote)
+    </div>
     <p><em>Pull-down: rebote al ir de bajo a alto</em></p>
   </div>
 
@@ -61,66 +69,68 @@ Para leer un push button hay dos conexiones típicas:
 
 # Cómo eliminar el rebote (antirrebote)
 
-Nos quedamos con **dos** estrategias claras y suficientes:  
+Nos quedamos con **dos** estrategias sencillas y efectivas:  
 **(1) Hardware con RC** y **(2) Software con máquina de estados usando `millis()`**.
 
 ## 1) Antirrebote por **hardware** con filtro RC
 
-Vamos a **asumir** un rebote de **20 ms** para simplificar el diseño. La idea es que el filtro sea un poco más lento que ese rebote para que lo “suavice”.
+Vamos a suponer un rebote de **20 ms** para simplificar. La idea es que el filtro sea **un poco más lento** que ese rebote para que lo “suavice”.
 
-- **Dónde va cada cosa (caso pull-up):** usa un **pull-up externo** a Vcc, **botón a GND**, y pon un **condensador del pin a GND**. Configura el pin como **INPUT** (sin pull-up interno) para que el RC lo defina todo.
-- **Cálculo simple:** escogemos valores para cumplir aproximadamente \(5\tau > 20\,\text{ms}\). Con
-  \[
-  \tau = R \cdot C
-  \]
-  si usamos **R = 100 kΩ** y **C = 47 nF**, obtenemos \(\tau \approx 4.7\,\text{ms}\) y **5τ ≈ 23.5 ms**, suficiente para filtrar el rebote de 20 ms.
+- **Esquema (pull-up típico):** usa un **pull-up** a Vcc, el **botón a GND**, y coloca un **condensador del pin a GND**.  
+- **Cálculo directo:** un RC se define por su constante de tiempo \( \tau = R \cdot C \). Queremos que **\(5\tau > 20\,\text{ms}\)**, así el pin no cruza varias veces el umbral durante el rebote.
+
+**Ejemplo práctico (con 20 ms):**  
+\[
+R = 100\,\text{k}\Omega, \quad C = 47\,\text{nF} \quad \Rightarrow \quad \tau \approx 4.7\,\text{ms} \quad \Rightarrow \quad 5\tau \approx 23.5\,\text{ms}
+\]
 
 <div style="text-align:center; margin: 1em 0;">
-  <img src="images/waveform-rc-debounce.png" alt="Señal con rebote vs señal filtrada por RC" style="max-width:80%;">
-  <p><em>Arriba: rebote “crudo”. Abajo: el RC hace que el pin cruce el umbral solo una vez</em></p>
+  <div style="border:2px dashed #bbb; padding:28px; width:80%; height:220px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;">
+    <strong>PLACEHOLDER IMG:</strong>&nbsp; "waveform-rc-debounce.png" — Rebote crudo vs salida filtrada por RC
+  </div>
+  <p><em>Arriba: rebote crudo. Abajo: el RC hace que el pin cruce el umbral una sola vez</em></p>
 </div>
 
-### Circuito práctico (3.3 V o 5 V, ejemplo pull-up)
+### Circuito recomendado (3.3 V o 5 V, pull-up)
 
-- **Rpull-up = 100 kΩ** a Vcc (externa)  
+- **Rpull-up = 100 kΩ** a Vcc  
 - **SW1** a GND  
 - **C = 47 nF** del pin a GND  
-- (Opcional) **Rserie = 100 Ω** con el botón para limitar picos hacia el condensador
+- (Opcional) **Rserie = 100 Ω** con el botón para limitar picos de corriente hacia el condensador
 
 <div style="text-align:center; margin: 1em 0;">
-  <img src="images/circuito-antirrebote-rc.png" alt="RC práctico con pull-up y C al pin" style="max-width:80%;">
+  <div style="border:2px dashed #bbb; padding:28px; width:80%; height:220px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;">
+    <strong>PLACEHOLDER IMG:</strong>&nbsp; "circuito-antirrebote-rc.png" — Esquema con Rpull-up, C al pin y Rserie
+  </div>
   <p><em>Pull-up externo de 100 kΩ + C de 47 nF → 5τ ≈ 23.5 ms</em></p>
 </div>
 
-> **Nota:** El RC añade un **retardo** a la lectura del botón. Si necesitas que responda más rápido, baja un poco \(R\) o \(C\) y prueba que siga filtrando bien.
+> **Nota:** El RC añade un **retardo** a la lectura. Si quieres más rapidez, reduce un poco \(R\) o \(C\) y valida que siga filtrando bien.
 
 ---
 
 ## 2) Antirrebote por **software** con `millis()` (no bloqueante)
 
-Usamos una **máquina de estados** muy simple:  
-1) Detecta un cambio (posible rebote).  
-2) Abre una ventana de **estabilidad**.  
-3) Confirma el nuevo estado cuando transcurre el tiempo sin más cambios.
+Usaremos una **máquina de estados** muy simple: detecta un cambio crudo, abre una **ventana de estabilidad** y **confirma** el nuevo estado si pasan **~35 ms** sin más cambios. No bloquea la CPU.
 
 ```cpp
-const int buttonPin = 2;             // si no usas RC, INPUT_PULLUP es lo más práctico
+const int buttonPin = 2;             // INPUT_PULLUP si no usas RC
 const int led = 13;
-const unsigned long debounceMs = 35; // ~35 ms funciona bien en la mayoría de casos
+const unsigned long debounceMs = 35; // ventana de estabilidad
 
-int stableState = HIGH;              // reposo en HIGH con pull-up
+int stableState = HIGH;              // reposo en HIGH (pull-up)
 int lastRead = HIGH;
 unsigned long lastEdgeMs = 0;
 
 void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);  // o INPUT si usas el RC con pull-up externo
+  pinMode(buttonPin, INPUT_PULLUP);  // o INPUT si usas RC externo
   pinMode(led, OUTPUT);
 }
 
 void loop() {
   int reading = digitalRead(buttonPin);
 
-  // 1) Cambio crudo → reinicia ventana de estabilidad
+  // 1) Cambio crudo → reinicia ventana
   if (reading != lastRead) {
     lastEdgeMs = millis();
     lastRead = reading;
@@ -140,22 +150,4 @@ void loop() {
 }
 ```
 
-> **Tip:** si usas **interrupciones**, es mejor llevar al pin de IRQ una **señal ya filtrada por RC** y en la ISR solo detectar el flanco.
-
----
-
-## Comparativa rápida
-
-| Aspecto                 | Hardware (RC)                         | Software (`millis()`)                   |
-|-------------------------|---------------------------------------|-----------------------------------------|
-| Componentes externos    | Sí                                    | No                                      |
-| Flexibilidad            | Fija (R y C)                          | Alta (ajuste en código)                 |
-| Carga del MCU           | Nula                                  | Baja (no bloqueante)                    |
-| Robustez EMI            | Alta (filtra en el borde)             | Media (depende de umbrales/ruido)       |
-| Ideal para              | Entradas a interrupción, señal crítica| Prototipos, UI, firmware flexible       |
-
----
-
-## Conclusión
-
-Con **RC** en hardware (p. ej., **100 kΩ + 47 nF → 5τ ≈ 23.5 ms**) y **`millis()`** en firmware (~**35 ms**), cubres la gran mayoría de casos: señal **limpia**, código **simple** y comportamiento **predecible**.
+> **Tip:** si usas **interrupciones**, es mejor llevar al pin de IRQ una **señal ya filtrada por RC** y, en la ISR, solo detectar el **flanco**.
