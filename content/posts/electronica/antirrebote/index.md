@@ -18,8 +18,6 @@ tags:
 categories:
 - Electrónica
 - Básico
-math: true
----
 
 Los **pulsadores**, **switches** y **relés** están en todos lados.  
 Cuando los conectamos a un microcontrolador (PIC, ESP32, Arduino, etc.) esperamos un **cambio de estado limpio** por cada pulsación. En la práctica no ocurre así: los contactos mecánicos **rebotan** durante unos milisegundos y generan **varias transiciones** antes de estabilizarse. A esto se le llama **rebote de contacto** (*contact bounce*).
