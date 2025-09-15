@@ -35,6 +35,21 @@ languages:
 # default language for the content
 defaultContentLanguage: es
 
+################
+permalinks:
+  posts: "/:sections/:slug/"
+
+enableRobotsTXT: true
+
+sitemap:
+  changefreq: weekly
+  priority: 0.5
+  filename: "sitemap.xml"
+
+enableGitInfo: true
+################
+
+
 # Allow raw html in markdown file
 markup:
   goldmark:
