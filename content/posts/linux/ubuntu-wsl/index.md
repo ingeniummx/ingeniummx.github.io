@@ -113,7 +113,7 @@ Da clic en el icono verde `><` en la esquina inferior izquierda y después en **
 - Usa `explorer.exe .` desde Ubuntu para abrir la carpeta actual en el Explorador de Windows. (Asegúrese de agregar el punto al final del comando para abrir el directorio actual.)
 
 
-#### Documentacion
+#### Documentación
 
 https://learn.microsoft.com/es-mx/windows/wsl/
 
