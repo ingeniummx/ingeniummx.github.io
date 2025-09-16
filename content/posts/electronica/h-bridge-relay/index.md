@@ -22,7 +22,6 @@ math: true
 
 ---
 
-## Introducción
 
 Un **puente H** es un circuito que permite invertir el sentido de giro de un motor de corriente directa (DC) al cambiar la polaridad de alimentación entre sus terminales. Se utiliza en aplicaciones donde es necesario controlar el movimiento en ambos sentidos, como en robótica o mecanismos reversibles.
 
@@ -38,9 +37,8 @@ Por ejemplo, un **módulo de 2 canales** funciona con nivel lógico bajo (*LOW l
 
 Esto lo hace ideal para controlar pequeños motores, lámparas o cargas que requieren mayor corriente que la que un Arduino puede manejar directamente.
 
----
 
-## 🔌 Materiales necesarios
+## Materiales necesarios
 
 - 1 × Motor DC de 12 V  
 - 1 × Módulo de 2 relevadores de 5 V  
@@ -49,18 +47,16 @@ Esto lo hace ideal para controlar pequeños motores, lámparas o cargas que requ
 - Cables de conexión  
 - Protoboard (opcional)  
 
----
 
-## 🔁 ¿Cómo funciona el cambio de dirección?
+## ¿Cómo funciona el cambio de dirección?
 
 Para invertir el giro del motor necesitamos **cambiar la polaridad de alimentación**.  
 
 Esto se logra **cruzando las conexiones** a través de los contactos **NO (Normalmente Abierto)** y **NC (Normalmente Cerrado)** de cada relevador.  
 Cuando uno de los relevadores conmuta, invierte la polaridad aplicada al motor y con ello el sentido de giro.
 
----
 
-## ⚡ Conexiones
+## Conexiones
 
 En el siguiente diagrama se muestra cómo se conecta el motor, la fuente de 12 V, el módulo de relevadores y el Arduino:
 
@@ -76,7 +72,6 @@ En el siguiente diagrama se muestra cómo se conecta el motor, la fuente de 12 V
    - VCC → 5 V  
    - GND → GND  
 
----
 
 ## 🔄 Estados de operación
 
