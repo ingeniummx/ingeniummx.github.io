@@ -59,8 +59,7 @@ Cuando uno de los relevadores conmuta, invierte la polaridad aplicada al motor y
 ## Conexiones
 
 En el siguiente diagrama se muestra cómo se conecta el motor, la fuente de 12 V, el módulo de relevadores y el Arduino:
-
-<div style="text-align:center">
+<div align="center">
   <img src="images/puente-h-relevadores-diagrama.png" alt="Diagrama de conexión puente H con relevadores" style="max-width:100%; border-radius:12px;"/>
 </div>
 
@@ -79,7 +78,7 @@ En el siguiente diagrama se muestra cómo se conecta el motor, la fuente de 12 V
 
 El puente H hecho con relevadores tiene **cuatro combinaciones posibles** según la activación de los dos relevadores (IN1 e IN2):  
 
-<div style="text-align:center">
+<div align="center">
   <img src="images/puente-h-relevadores-estados.png" alt="Estados del puente H con relevadores" style="max-width:100%; border-radius:12px;"/>
 </div>
 
