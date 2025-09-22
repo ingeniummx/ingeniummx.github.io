@@ -323,8 +323,4 @@ params:
     # Show/hide disclaimer notice in the footer. Default is "false".
     disclaimer:
       enable: false
-menu:
-  main:
-    - name: "Blog"   # <- Texto que se mostrará en el top menu
-      url: "/posts/"
-      weight: 10
+
