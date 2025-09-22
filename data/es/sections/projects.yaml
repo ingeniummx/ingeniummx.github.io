@@ -3,7 +3,7 @@ section:
   name: Proyectos
   id: projects
   enable: true
-  weight: 5
+  weight: 8
   showOnNavbar: true
 
 # filter buttons (los valores "filter" deben aparecer en tags)
