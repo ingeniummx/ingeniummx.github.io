@@ -13,6 +13,8 @@ tags:
 - PCB
 - Electrónica
 - Maker
+- Diseño de PCBs
+- Fabricación de circuitos
 categories:
 - Electrónica
 - Básico
@@ -55,7 +57,7 @@ El diseño de una PCB empieza siempre en un **software CAD electrónico**. Algun
 
 - **EasyEDA** → gratis, funciona en navegador, muy práctico si estás empezando.  
 - **KiCad** → open source y completo, usado tanto por makers como en proyectos profesionales.  
-- **Altium Designer** → profesional, pero de pago.  
+- **Altium Designer** → profesional (de pago). 
 
 #### Pasos para diseñar una PCB
 

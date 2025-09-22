@@ -15,6 +15,7 @@ tags:
 - Arduino
 - ESP32
 - PIC
+- Electrónica digital
 categories:
 - Electrónica
 - Básico

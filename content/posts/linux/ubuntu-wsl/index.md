@@ -1,5 +1,5 @@
 ---
-title: "Cómo instalar Ubuntu 24.04 en Windows 11 con WSL2"
+title: "Cómo instalar Ubuntu 24.04 en Windows 11 con WSL2 paso a paso"
 date: 2025-09-15T10:00:00+02:00
 description: "Guía paso a paso para instalar Ubuntu 24.04 en WSL2, configurar aplicaciones esenciales y trabajar con Visual Studio Code en Windows 11."
 menu:
@@ -14,18 +14,21 @@ tags:
 - Windows 11
 - VS Code
 - Linux
+- Linux en Windows
 categories:
 - Linux
-- Desarrollo
+- Desarrollo.
+- Tutoriales
 hero: images/wsl-ubuntu-vscode-cover.jpg
 ---
 
-El **Subsistema de Windows para Linux (WSL2)** permite correr distribuciones de Linux dentro de Windows 11, sin necesidad de crear una máquina virtual usando programas como Virtualbox o de hacer una instalacion dual-boot.  
+El **Subsistema de Windows para Linux (WSL2)** permite correr distribuciones de Linux dentro de Windows 11, sin necesidad de crear una máquina virtual con VirtualBox ni instalar dual-boot.  
 En este tutorial instalaremos **Ubuntu 24.04 (Noble Numbat)**, configuraremos aplicaciones esenciales como `git`, `gedit`, y prepararemos el entorno para trabajar con **Visual Studio Code**.
 
-### WSL2 en Windows 11
+## 1. WSL2 en Windows 11
 
 Abre **PowerShell como administrador** y ejecuta:
+
 ```powershell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
