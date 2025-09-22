@@ -8,8 +8,8 @@ contactInfo:
   email: "ingenium.mex01@gmail.com"
   github: ingeniummx
   linkedin: ingenium-mx
-  instagram: ingeniummx
-  youtube: ingenium-mx
+  # instagram: ingeniummx
+  # youtube: ingenium-mx
 
 # Resumen sobre lo que hacemos
 summary:
