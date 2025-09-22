@@ -15,7 +15,7 @@ description: "Ingenium Mx – Aprende, construye, crea. Un espacio dedicado a pr
 customMenus:
   - name: Documentación
     url: https://toha-guides.netlify.app/posts/
-    hideFromNavbar: false
+    hideFromNavbar: true
     showOnFooter: false
 
 # OpenGraph (vistas previas en redes sociales)
