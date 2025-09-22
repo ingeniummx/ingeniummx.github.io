@@ -2,7 +2,7 @@
 section:
   name: Proyectos
   id: projects
-  enable: true
+  enable: false
   weight: 8
   showOnNavbar: true
 
