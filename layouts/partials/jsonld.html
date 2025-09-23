@@ -1,0 +1,19 @@
+<!-- ============ JSON-LD Structured Data ============ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "{{ .Site.BaseURL }}",
+  "name": "{{ .Site.Title }}",
+  "description": "{{ .Site.Params.description }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ingenium MX",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ "images/author/logo3.png" | absURL }}"
+    }
+  },
+  "inLanguage": "{{ .Site.Language.Lang }}"
+}
+</script>
