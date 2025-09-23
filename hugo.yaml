@@ -176,6 +176,8 @@ params:
         # Google Analytics
         google:
           id: G-09PLHGV7MZ
+        clarity:
+          id: tb58j7pbqy
         # # CounterDev
         # counterDev:
         #   id: <your counterdev id>
