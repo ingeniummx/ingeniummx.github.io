@@ -1,6 +1,0 @@
-{{- /* Extend original head */ -}}
-{{ partial "head.html" . }}
-
-{{ if .Site.Params.customHeadHTML }}
-  {{ .Site.Params.customHeadHTML | safeHTML }}
-{{ end }}
