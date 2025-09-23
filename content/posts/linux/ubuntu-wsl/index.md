@@ -17,7 +17,7 @@ tags:
 - Linux en Windows
 categories:
 - Linux
-- Desarrollo.
+- Desarrollo
 - Tutoriales
 hero: images/wsl-ubuntu-vscode-cover.jpg
 ---
