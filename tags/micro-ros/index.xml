@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Micro-ROS on Ingenium MX</title><link>https://ingeniummx.github.io/tags/micro-ros/</link><description>Recent content in Micro-ROS on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Sat, 16 Mar 2024 18:30:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/micro-ros/index.xml" rel="self" type="application/rss+xml"/><item><title>Instalar micro-ROS en la Pico</title><link>https://ingeniummx.github.io/posts/microcontroladores/instalar-micro-ros-en-la-pico/</link><pubDate>Sat, 16 Mar 2024 18:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/microcontroladores/instalar-micro-ros-en-la-pico/</guid><description>&lt;p&gt;&lt;strong&gt;micro-ROS&lt;/strong&gt; lleva ROS 2 a microcontroladores con recursos limitados. A continuación se describe cómo configurar el build system para la Raspberry Pi Pico utilizando el Pico SDK oficial.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="prerrequisitos"&gt;Prerrequisitos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Toolchain Arm (&lt;code&gt;arm-none-eabi-gcc&lt;/code&gt;), CMake y Ninja.&lt;/li&gt;
+&lt;li&gt;ROS 2 Humble (o posterior) instalado en tu sistema.&lt;/li&gt;
+&lt;li&gt;Repositorio &lt;code&gt;micro_ros_setup&lt;/code&gt; clonado en el workspace de ROS 2.&lt;/li&gt;
+&lt;li&gt;Pico SDK inicializado (&lt;code&gt;PICO_SDK_PATH&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="configurar-el-workspace"&gt;Configurar el workspace&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;source /opt/ros/humble/setup.bash
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;mkdir -p ~/micro_ros_ws/src
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;cd ~/micro_ros_ws/src
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;git clone https://github.com/micro-ROS/micro_ros_setup.git
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;cd ..
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;colcon build
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;source install/local_setup.bash
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="crear-firmware-para-la-pico"&gt;Crear firmware para la Pico&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Importa los repositorios necesarios&lt;/strong&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;ros2 run micro_ros_setup create_firmware_ws.sh freertos raspberripi_pico
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;Descarga dependencias&lt;/strong&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;ros2 run micro_ros_setup configure_firmware.sh freertos raspberripi_pico
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;Compila&lt;/strong&gt; con opciones personalizadas (Wi-Fi deshabilitada por defecto):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;ros2 run micro_ros_setup build_firmware.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start="4"&gt;
+&lt;li&gt;El resultado (&lt;code&gt;firmware.uf2&lt;/code&gt;) se genera en &lt;code&gt;firmware/build&lt;/code&gt;. Cópialo a la Pico en modo BOOTSEL.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="ejemplo-nodo-ping"&gt;Ejemplo: nodo ping&lt;/h2&gt;
+&lt;p&gt;Tras flashear, conecta la Pico por USB y ejecuta en el host:&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Diseño Analógico on Ingenium MX</title><link>https://ingeniummx.github.io/tags/dise%C3%B1o-anal%C3%B3gico/</link><description>Recent content in Diseño Analógico on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Sat, 16 Mar 2024 16:30:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/dise%C3%B1o-anal%C3%B3gico/index.xml" rel="self" type="application/rss+xml"/><item><title>Cambiadores de rango con op-amps</title><link>https://ingeniummx.github.io/posts/electronica/cambiadores-de-rango-con-op-amps/</link><pubDate>Sat, 16 Mar 2024 16:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/electronica/cambiadores-de-rango-con-op-amps/</guid><description>&lt;p&gt;Cuando un sensor entrega una señal fuera del rango de tu ADC o instrumento, necesitas un &lt;strong&gt;cambiador de rango&lt;/strong&gt;. Con amplificadores operacionales puedes desplazar y escalar niveles para aprovechar mejor la resolución disponible.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="objetivo-de-diseño"&gt;Objetivo de diseño&lt;/h2&gt;
+&lt;p&gt;Queremos transformar una señal (V_{in}) en (V_{out}) según:&lt;/p&gt;
+&lt;p&gt;[
+V_{out} = a V_{in} + b
+]&lt;/p&gt;
+&lt;p&gt;donde (a) es la ganancia y (b) el offset. Un circuito sumador/restador con op-amp no inversor logra este comportamiento.&lt;/p&gt;</description></item></channel></rss>

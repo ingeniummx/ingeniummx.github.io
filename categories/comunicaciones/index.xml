@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Comunicaciones on Ingenium MX</title><link>https://ingeniummx.github.io/categories/comunicaciones/</link><description>Recent content in Comunicaciones on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Sat, 16 Mar 2024 19:30:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/categories/comunicaciones/index.xml" rel="self" type="application/rss+xml"/><item><title>Controlar un LED con ESP32 y MQTT</title><link>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</link><pubDate>Sat, 16 Mar 2024 19:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</guid><description>&lt;p&gt;MQTT es un protocolo ligero de mensajería ideal para IoT. Con un ESP32 y un broker local o en un VPS puedes controlar actuadores desde cualquier lugar del mundo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="preparar-el-broker"&gt;Preparar el broker&lt;/h2&gt;
+&lt;h3 id="opción-local-mosquitto"&gt;Opción local (Mosquitto)&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt install mosquitto mosquitto-clients
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo systemctl enable --now mosquitto
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="opción-vps"&gt;Opción VPS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Contrata un VPS ligero (1 vCPU, 1 GB RAM).&lt;/li&gt;
+&lt;li&gt;Instala Mosquitto y configura autenticación básica en &lt;code&gt;/etc/mosquitto/conf.d/seguro.conf&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;allow_anonymous false
+password_file /etc/mosquitto/passwd
+listener 8883
+cafile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+keyfile /etc/letsencrypt/live/tu-dominio/privkey.pem
+certfile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start="3"&gt;
+&lt;li&gt;Genera certificados TLS con Let’s Encrypt y crea usuarios con &lt;code&gt;mosquitto_passwd&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="firmware-esp32-arduino-core"&gt;Firmware ESP32 (Arduino core)&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;WiFi.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;PubSubClient.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; ssid &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuRed&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; password &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuClave&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; mqtt_server &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;broker.tudominio.com&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; mqtt_port &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;8883&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;WiFiClientSecure espClient;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;PubSubClient &lt;span style="color:#a6e22e"&gt;client&lt;/span&gt;(espClient);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; ledPin &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;2&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;callback&lt;/span&gt;(&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; topic, byte&lt;span style="color:#f92672"&gt;*&lt;/span&gt; payload, &lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; length) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; String mensaje;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; i &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;; i &lt;span style="color:#f92672"&gt;&amp;lt;&lt;/span&gt; length; i&lt;span style="color:#f92672"&gt;++&lt;/span&gt;) mensaje &lt;span style="color:#f92672"&gt;+=&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;)payload[i];
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; digitalWrite(ledPin, mensaje &lt;span style="color:#f92672"&gt;==&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;ON&amp;#34;&lt;/span&gt; &lt;span style="color:#f92672"&gt;?&lt;/span&gt; HIGH : LOW);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;reconnect&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (client.connect(&lt;span style="color:#e6db74"&gt;&amp;#34;esp32-led&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;usuario&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;password&amp;#34;&lt;/span&gt;)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.subscribe(&lt;span style="color:#e6db74"&gt;&amp;#34;casa/sala/led&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; } &lt;span style="color:#66d9ef"&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;2000&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;setup&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; pinMode(ledPin, OUTPUT);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; Serial.begin(&lt;span style="color:#ae81ff"&gt;115200&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; WiFi.begin(ssid, password);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (WiFi.status() &lt;span style="color:#f92672"&gt;!=&lt;/span&gt; WL_CONNECTED) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;500&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; espClient.setCACert(&lt;span style="color:#e6db74"&gt;&amp;#34;-----BEGIN CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;...&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;-----END CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setServer(mqtt_server, mqtt_port);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setCallback(callback);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;loop&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) reconnect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.loop();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Para conexiones sin TLS ajusta el puerto 1883 y elimina &lt;code&gt;setCACert&lt;/code&gt;, pero prioriza seguridad en despliegues reales.&lt;/p&gt;</description></item><item><title>Meshtastic explicado</title><link>https://ingeniummx.github.io/posts/comunicaciones/meshtastic-explicado/</link><pubDate>Sat, 16 Mar 2024 12:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/meshtastic-explicado/</guid><description>&lt;p&gt;&lt;strong&gt;Meshtastic&lt;/strong&gt; es un firmware open source que transforma radios LoRa de bajo costo en redes malladas para mensajería y telemetría sin infraestructura celular. Es ideal para actividades al aire libre, resiliencia ante desastres y proyectos comunitarios.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="arquitectura-básica"&gt;Arquitectura básica&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Radios LoRa&lt;/strong&gt; basados en chip SX1262/SX1276 que operan en bandas ISM (433, 868, 915 MHz).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Firmware Meshtastic&lt;/strong&gt; sobre microcontroladores ESP32, nRF52 o RP2040.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Topología mesh&lt;/strong&gt;: cada nodo reenvía mensajes de manera asincrónica usando enrutamiento oportunista.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Aplicaciones móviles&lt;/strong&gt; (Android/iOS) y clientes CLI/desktop que se conectan vía Bluetooth o USB.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="tipos-de-nodos"&gt;Tipos de nodos&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Nodos personales:&lt;/strong&gt; dispositivos portátiles con pantalla (LilyGO T-Beam, T-Echo) que envían textos y ubicación GPS.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodos de infraestructura:&lt;/strong&gt; placas alimentadas continuamente para ampliar cobertura (antenas externas, alta potencia).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodos sensores:&lt;/strong&gt; integran telemetría (temperatura, humedad, relés) y reportan periódicamente.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="configuración-inicial"&gt;Configuración inicial&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Instala el firmware con &lt;strong&gt;Meshtastic Flasher&lt;/strong&gt; o &lt;code&gt;meshtastic --flash&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Empareja el dispositivo con la app móvil mediante Bluetooth o USB.&lt;/li&gt;
+&lt;li&gt;Ajusta &lt;strong&gt;canal, región y potencia&lt;/strong&gt; según normativa local (duty cycle, ERP).&lt;/li&gt;
+&lt;li&gt;Define roles (router, client) y habilita características como MQTT bridge o almacenamiento en tarjeta SD.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="funciones-destacadas"&gt;Funciones destacadas&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Mensajería encriptada&lt;/strong&gt; con AES-CTR y claves compartidas.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Posicionamiento GPS&lt;/strong&gt; y compartición de coordenadas con iconos personalizados.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bridge MQTT/HTTP&lt;/strong&gt; para integrar con servidores o dashboards remotos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Telemetría extendida&lt;/strong&gt; a través de plugins Python (&lt;code&gt;meshtastic-python&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="casos-de-uso"&gt;Casos de uso&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Equipos de senderismo, ciclismo o rescate que requieren comunicación sin cobertura celular.&lt;/li&gt;
+&lt;li&gt;Redes comunitarias de alerta temprana (incendios, inundaciones).&lt;/li&gt;
+&lt;li&gt;IoT rural con nodos alimentados por energía solar.&lt;/li&gt;
+&lt;li&gt;Eventos temporales donde se necesita mensajería descentralizada.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="buenas-prácticas"&gt;Buenas prácticas&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Utiliza &lt;strong&gt;antenas calibradas&lt;/strong&gt; y respeta la polarización para maximizar alcance.&lt;/li&gt;
+&lt;li&gt;Configura &lt;strong&gt;intervalos de retransmisión&lt;/strong&gt; adecuados para evitar congestión en mallas densas.&lt;/li&gt;
+&lt;li&gt;Documenta &lt;strong&gt;claves y canales&lt;/strong&gt; en un gestor seguro para tu equipo.&lt;/li&gt;
+&lt;li&gt;Mantén el firmware actualizado y participa en la comunidad de GitHub/Discord para aprovechar nuevas funciones.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Con esta visión podrás planear una red Meshtastic confiable y adaptarla a tus necesidades de comunicación de largo alcance.&lt;/p&gt;</description></item></channel></rss>

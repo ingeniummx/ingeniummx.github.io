@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MQTT on Ingenium MX</title><link>https://ingeniummx.github.io/tags/mqtt/</link><description>Recent content in MQTT on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Thu, 18 Sep 2025 10:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/mqtt/index.xml" rel="self" type="application/rss+xml"/><item><title>¿Qué es MQTT y por qué se usa tanto en IoT?</title><link>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</link><pubDate>Thu, 18 Sep 2025 10:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</guid><description>&lt;p&gt;El &lt;strong&gt;protocolo MQTT (Message Queuing Telemetry Transport)&lt;/strong&gt; se ha convertido en el &lt;em&gt;idioma común&lt;/em&gt; de los proyectos &lt;strong&gt;IoT&lt;/strong&gt;, tanto domésticos como industriales. Es &lt;strong&gt;ligero&lt;/strong&gt;, funciona bien con enlaces inestables y permite que sensores, microcontroladores, dashboards y servicios en la nube intercambien datos sin enredarse en sockets manuales. Su modelo &lt;strong&gt;publish/subscribe&lt;/strong&gt; gira alrededor de un broker que recibe, filtra y entrega mensajes, de los clientes que publican o se suscriben, y de los temas (&lt;em&gt;topics&lt;/em&gt;) que organizan la información con rutas jerárquicas como &lt;code&gt;ingenium/sala/temperatura&lt;/code&gt;.&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MQTT on Ingenium MX</title><link>https://ingeniummx.github.io/tags/mqtt/</link><description>Recent content in MQTT on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Thu, 18 Sep 2025 10:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/mqtt/index.xml" rel="self" type="application/rss+xml"/><item><title>¿Qué es MQTT y por qué se usa tanto en IoT?</title><link>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</link><pubDate>Thu, 18 Sep 2025 10:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</guid><description>&lt;p&gt;El &lt;strong&gt;protocolo MQTT (Message Queuing Telemetry Transport)&lt;/strong&gt; se ha convertido en el &lt;em&gt;idioma común&lt;/em&gt; de los proyectos &lt;strong&gt;IoT&lt;/strong&gt;, tanto domésticos como industriales. Es &lt;strong&gt;ligero&lt;/strong&gt;, funciona bien con enlaces inestables y permite que sensores, microcontroladores, dashboards y servicios en la nube intercambien datos sin enredarse en sockets manuales. Su modelo &lt;strong&gt;publish/subscribe&lt;/strong&gt; gira alrededor de un broker que recibe, filtra y entrega mensajes, de los clientes que publican o se suscriben, y de los temas (&lt;em&gt;topics&lt;/em&gt;) que organizan la información con rutas jerárquicas como &lt;code&gt;ingenium/sala/temperatura&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Controlar un LED con ESP32 y MQTT</title><link>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</link><pubDate>Sat, 16 Mar 2024 19:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</guid><description>&lt;p&gt;MQTT es un protocolo ligero de mensajería ideal para IoT. Con un ESP32 y un broker local o en un VPS puedes controlar actuadores desde cualquier lugar del mundo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="preparar-el-broker"&gt;Preparar el broker&lt;/h2&gt;
+&lt;h3 id="opción-local-mosquitto"&gt;Opción local (Mosquitto)&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt install mosquitto mosquitto-clients
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo systemctl enable --now mosquitto
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="opción-vps"&gt;Opción VPS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Contrata un VPS ligero (1 vCPU, 1 GB RAM).&lt;/li&gt;
+&lt;li&gt;Instala Mosquitto y configura autenticación básica en &lt;code&gt;/etc/mosquitto/conf.d/seguro.conf&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;allow_anonymous false
+password_file /etc/mosquitto/passwd
+listener 8883
+cafile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+keyfile /etc/letsencrypt/live/tu-dominio/privkey.pem
+certfile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start="3"&gt;
+&lt;li&gt;Genera certificados TLS con Let’s Encrypt y crea usuarios con &lt;code&gt;mosquitto_passwd&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="firmware-esp32-arduino-core"&gt;Firmware ESP32 (Arduino core)&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;WiFi.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;PubSubClient.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; ssid &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuRed&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; password &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuClave&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; mqtt_server &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;broker.tudominio.com&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; mqtt_port &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;8883&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;WiFiClientSecure espClient;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;PubSubClient &lt;span style="color:#a6e22e"&gt;client&lt;/span&gt;(espClient);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; ledPin &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;2&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;callback&lt;/span&gt;(&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; topic, byte&lt;span style="color:#f92672"&gt;*&lt;/span&gt; payload, &lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; length) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; String mensaje;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; i &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;; i &lt;span style="color:#f92672"&gt;&amp;lt;&lt;/span&gt; length; i&lt;span style="color:#f92672"&gt;++&lt;/span&gt;) mensaje &lt;span style="color:#f92672"&gt;+=&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;)payload[i];
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; digitalWrite(ledPin, mensaje &lt;span style="color:#f92672"&gt;==&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;ON&amp;#34;&lt;/span&gt; &lt;span style="color:#f92672"&gt;?&lt;/span&gt; HIGH : LOW);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;reconnect&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (client.connect(&lt;span style="color:#e6db74"&gt;&amp;#34;esp32-led&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;usuario&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;password&amp;#34;&lt;/span&gt;)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.subscribe(&lt;span style="color:#e6db74"&gt;&amp;#34;casa/sala/led&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; } &lt;span style="color:#66d9ef"&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;2000&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;setup&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; pinMode(ledPin, OUTPUT);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; Serial.begin(&lt;span style="color:#ae81ff"&gt;115200&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; WiFi.begin(ssid, password);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (WiFi.status() &lt;span style="color:#f92672"&gt;!=&lt;/span&gt; WL_CONNECTED) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;500&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; espClient.setCACert(&lt;span style="color:#e6db74"&gt;&amp;#34;-----BEGIN CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;...&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;-----END CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setServer(mqtt_server, mqtt_port);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setCallback(callback);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;loop&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) reconnect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.loop();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Para conexiones sin TLS ajusta el puerto 1883 y elimina &lt;code&gt;setCACert&lt;/code&gt;, pero prioriza seguridad en despliegues reales.&lt;/p&gt;</description></item></channel></rss>

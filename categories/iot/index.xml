@@ -1,1 +1,254 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IoT on Ingenium MX</title><link>https://ingeniummx.github.io/categories/iot/</link><description>Recent content in IoT on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Thu, 18 Sep 2025 10:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/categories/iot/index.xml" rel="self" type="application/rss+xml"/><item><title>¿Qué es MQTT y por qué se usa tanto en IoT?</title><link>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</link><pubDate>Thu, 18 Sep 2025 10:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</guid><description>&lt;p&gt;El &lt;strong&gt;protocolo MQTT (Message Queuing Telemetry Transport)&lt;/strong&gt; se ha convertido en el &lt;em&gt;idioma común&lt;/em&gt; de los proyectos &lt;strong&gt;IoT&lt;/strong&gt;, tanto domésticos como industriales. Es &lt;strong&gt;ligero&lt;/strong&gt;, funciona bien con enlaces inestables y permite que sensores, microcontroladores, dashboards y servicios en la nube intercambien datos sin enredarse en sockets manuales. Su modelo &lt;strong&gt;publish/subscribe&lt;/strong&gt; gira alrededor de un broker que recibe, filtra y entrega mensajes, de los clientes que publican o se suscriben, y de los temas (&lt;em&gt;topics&lt;/em&gt;) que organizan la información con rutas jerárquicas como &lt;code&gt;ingenium/sala/temperatura&lt;/code&gt;.&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IoT on Ingenium MX</title><link>https://ingeniummx.github.io/categories/iot/</link><description>Recent content in IoT on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Thu, 18 Sep 2025 10:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/categories/iot/index.xml" rel="self" type="application/rss+xml"/><item><title>¿Qué es MQTT y por qué se usa tanto en IoT?</title><link>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</link><pubDate>Thu, 18 Sep 2025 10:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/electronica/qu%C3%A9-es-mqtt-y-por-qu%C3%A9-se-usa-tanto-en-iot/</guid><description>&lt;p&gt;El &lt;strong&gt;protocolo MQTT (Message Queuing Telemetry Transport)&lt;/strong&gt; se ha convertido en el &lt;em&gt;idioma común&lt;/em&gt; de los proyectos &lt;strong&gt;IoT&lt;/strong&gt;, tanto domésticos como industriales. Es &lt;strong&gt;ligero&lt;/strong&gt;, funciona bien con enlaces inestables y permite que sensores, microcontroladores, dashboards y servicios en la nube intercambien datos sin enredarse en sockets manuales. Su modelo &lt;strong&gt;publish/subscribe&lt;/strong&gt; gira alrededor de un broker que recibe, filtra y entrega mensajes, de los clientes que publican o se suscriben, y de los temas (&lt;em&gt;topics&lt;/em&gt;) que organizan la información con rutas jerárquicas como &lt;code&gt;ingenium/sala/temperatura&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Controlar un LED con ESP32 y MQTT</title><link>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</link><pubDate>Sat, 16 Mar 2024 19:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</guid><description>&lt;p&gt;MQTT es un protocolo ligero de mensajería ideal para IoT. Con un ESP32 y un broker local o en un VPS puedes controlar actuadores desde cualquier lugar del mundo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="preparar-el-broker"&gt;Preparar el broker&lt;/h2&gt;
+&lt;h3 id="opción-local-mosquitto"&gt;Opción local (Mosquitto)&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt install mosquitto mosquitto-clients
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo systemctl enable --now mosquitto
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="opción-vps"&gt;Opción VPS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Contrata un VPS ligero (1 vCPU, 1 GB RAM).&lt;/li&gt;
+&lt;li&gt;Instala Mosquitto y configura autenticación básica en &lt;code&gt;/etc/mosquitto/conf.d/seguro.conf&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;allow_anonymous false
+password_file /etc/mosquitto/passwd
+listener 8883
+cafile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+keyfile /etc/letsencrypt/live/tu-dominio/privkey.pem
+certfile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start="3"&gt;
+&lt;li&gt;Genera certificados TLS con Let’s Encrypt y crea usuarios con &lt;code&gt;mosquitto_passwd&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="firmware-esp32-arduino-core"&gt;Firmware ESP32 (Arduino core)&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;WiFi.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;PubSubClient.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; ssid &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuRed&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; password &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuClave&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; mqtt_server &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;broker.tudominio.com&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; mqtt_port &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;8883&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;WiFiClientSecure espClient;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;PubSubClient &lt;span style="color:#a6e22e"&gt;client&lt;/span&gt;(espClient);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; ledPin &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;2&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;callback&lt;/span&gt;(&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; topic, byte&lt;span style="color:#f92672"&gt;*&lt;/span&gt; payload, &lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; length) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; String mensaje;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; i &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;; i &lt;span style="color:#f92672"&gt;&amp;lt;&lt;/span&gt; length; i&lt;span style="color:#f92672"&gt;++&lt;/span&gt;) mensaje &lt;span style="color:#f92672"&gt;+=&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;)payload[i];
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; digitalWrite(ledPin, mensaje &lt;span style="color:#f92672"&gt;==&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;ON&amp;#34;&lt;/span&gt; &lt;span style="color:#f92672"&gt;?&lt;/span&gt; HIGH : LOW);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;reconnect&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (client.connect(&lt;span style="color:#e6db74"&gt;&amp;#34;esp32-led&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;usuario&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;password&amp;#34;&lt;/span&gt;)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.subscribe(&lt;span style="color:#e6db74"&gt;&amp;#34;casa/sala/led&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; } &lt;span style="color:#66d9ef"&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;2000&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;setup&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; pinMode(ledPin, OUTPUT);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; Serial.begin(&lt;span style="color:#ae81ff"&gt;115200&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; WiFi.begin(ssid, password);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (WiFi.status() &lt;span style="color:#f92672"&gt;!=&lt;/span&gt; WL_CONNECTED) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;500&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; espClient.setCACert(&lt;span style="color:#e6db74"&gt;&amp;#34;-----BEGIN CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;...&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;-----END CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setServer(mqtt_server, mqtt_port);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setCallback(callback);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;loop&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) reconnect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.loop();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Para conexiones sin TLS ajusta el puerto 1883 y elimina &lt;code&gt;setCACert&lt;/code&gt;, pero prioriza seguridad en despliegues reales.&lt;/p&gt;</description></item><item><title>Ampliar entradas digitales con I2C</title><link>https://ingeniummx.github.io/posts/microcontroladores/ampliar-entradas-digitales-con-i2c/</link><pubDate>Sat, 16 Mar 2024 18:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/microcontroladores/ampliar-entradas-digitales-con-i2c/</guid><description>&lt;p&gt;Cuando el número de GPIO de la Raspberry Pi Pico no basta, puedes &lt;strong&gt;ampliar entradas digitales&lt;/strong&gt; con expansores I2C. Estos integrados entregan 8, 16 o más pines configurables sin sacrificar recursos del microcontrolador.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="expansores-populares"&gt;Expansores populares&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Chip&lt;/th&gt;
+&lt;th&gt;Bits&lt;/th&gt;
+&lt;th&gt;Voltaje&lt;/th&gt;
+&lt;th&gt;Características&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;MCP23017&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;1,8–5,5 V&lt;/td&gt;
+&lt;td&gt;Dos bancos de 8 bits, interrupciones configurables, pull-ups internos.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;PCF8575&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,5–5,5 V&lt;/td&gt;
+&lt;td&gt;Entradas/salidas quasi-bidireccionales, ideal para lectura de botones.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TCA9555&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,3–5,5 V&lt;/td&gt;
+&lt;td&gt;Interrupciones separadas, compatible con 400 kHz.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SX1509&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,5–3,6 V&lt;/td&gt;
+&lt;td&gt;PWM por pin, debounce interno y lógica de interrupciones avanzada.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="conexión-básica"&gt;Conexión básica&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Conecta SDA y SCL al bus I2C de la Pico (GPIO 4 y 5 por defecto) con &lt;strong&gt;pull-ups de 4,7 kΩ&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Alimenta el expansor con 3,3 V o el voltaje requerido.&lt;/li&gt;
+&lt;li&gt;Configura las direcciones mediante pines A0-A2.&lt;/li&gt;
+&lt;li&gt;Conecta pines de interrupción (INTA/INTB) a GPIO disponibles para detectar cambios sin sondeo constante.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="ejemplo-con-mcp23017-en-micropython"&gt;Ejemplo con MCP23017 en MicroPython&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;from&lt;/span&gt; machine &lt;span style="color:#f92672"&gt;import&lt;/span&gt; I2C, Pin
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;from&lt;/span&gt; mcp23017 &lt;span style="color:#f92672"&gt;import&lt;/span&gt; MCP23017
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;i2c &lt;span style="color:#f92672"&gt;=&lt;/span&gt; I2C(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;, scl&lt;span style="color:#f92672"&gt;=&lt;/span&gt;Pin(&lt;span style="color:#ae81ff"&gt;5&lt;/span&gt;), sda&lt;span style="color:#f92672"&gt;=&lt;/span&gt;Pin(&lt;span style="color:#ae81ff"&gt;4&lt;/span&gt;), freq&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;400000&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp &lt;span style="color:#f92672"&gt;=&lt;/span&gt; MCP23017(i2c, address&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;0x20&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;setup(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;, MCP23017&lt;span style="color:#f92672"&gt;.&lt;/span&gt;IN, pullup&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;setup(&lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;, MCP23017&lt;span style="color:#f92672"&gt;.&lt;/span&gt;IN, pullup&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; estado0 &lt;span style="color:#f92672"&gt;=&lt;/span&gt; exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;input(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; estado1 &lt;span style="color:#f92672"&gt;=&lt;/span&gt; exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;input(&lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;# Procesa botones&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En C/C++ utiliza la librería &lt;code&gt;hardware/i2c.h&lt;/code&gt; y escribe a los registros &lt;code&gt;IODIRA&lt;/code&gt;, &lt;code&gt;GPPUA&lt;/code&gt; y &lt;code&gt;GPIOA&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Meshtastic explicado</title><link>https://ingeniummx.github.io/posts/comunicaciones/meshtastic-explicado/</link><pubDate>Sat, 16 Mar 2024 12:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/meshtastic-explicado/</guid><description>&lt;p&gt;&lt;strong&gt;Meshtastic&lt;/strong&gt; es un firmware open source que transforma radios LoRa de bajo costo en redes malladas para mensajería y telemetría sin infraestructura celular. Es ideal para actividades al aire libre, resiliencia ante desastres y proyectos comunitarios.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="arquitectura-básica"&gt;Arquitectura básica&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Radios LoRa&lt;/strong&gt; basados en chip SX1262/SX1276 que operan en bandas ISM (433, 868, 915 MHz).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Firmware Meshtastic&lt;/strong&gt; sobre microcontroladores ESP32, nRF52 o RP2040.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Topología mesh&lt;/strong&gt;: cada nodo reenvía mensajes de manera asincrónica usando enrutamiento oportunista.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Aplicaciones móviles&lt;/strong&gt; (Android/iOS) y clientes CLI/desktop que se conectan vía Bluetooth o USB.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="tipos-de-nodos"&gt;Tipos de nodos&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Nodos personales:&lt;/strong&gt; dispositivos portátiles con pantalla (LilyGO T-Beam, T-Echo) que envían textos y ubicación GPS.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodos de infraestructura:&lt;/strong&gt; placas alimentadas continuamente para ampliar cobertura (antenas externas, alta potencia).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodos sensores:&lt;/strong&gt; integran telemetría (temperatura, humedad, relés) y reportan periódicamente.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="configuración-inicial"&gt;Configuración inicial&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Instala el firmware con &lt;strong&gt;Meshtastic Flasher&lt;/strong&gt; o &lt;code&gt;meshtastic --flash&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Empareja el dispositivo con la app móvil mediante Bluetooth o USB.&lt;/li&gt;
+&lt;li&gt;Ajusta &lt;strong&gt;canal, región y potencia&lt;/strong&gt; según normativa local (duty cycle, ERP).&lt;/li&gt;
+&lt;li&gt;Define roles (router, client) y habilita características como MQTT bridge o almacenamiento en tarjeta SD.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="funciones-destacadas"&gt;Funciones destacadas&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Mensajería encriptada&lt;/strong&gt; con AES-CTR y claves compartidas.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Posicionamiento GPS&lt;/strong&gt; y compartición de coordenadas con iconos personalizados.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bridge MQTT/HTTP&lt;/strong&gt; para integrar con servidores o dashboards remotos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Telemetría extendida&lt;/strong&gt; a través de plugins Python (&lt;code&gt;meshtastic-python&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="casos-de-uso"&gt;Casos de uso&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Equipos de senderismo, ciclismo o rescate que requieren comunicación sin cobertura celular.&lt;/li&gt;
+&lt;li&gt;Redes comunitarias de alerta temprana (incendios, inundaciones).&lt;/li&gt;
+&lt;li&gt;IoT rural con nodos alimentados por energía solar.&lt;/li&gt;
+&lt;li&gt;Eventos temporales donde se necesita mensajería descentralizada.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="buenas-prácticas"&gt;Buenas prácticas&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Utiliza &lt;strong&gt;antenas calibradas&lt;/strong&gt; y respeta la polarización para maximizar alcance.&lt;/li&gt;
+&lt;li&gt;Configura &lt;strong&gt;intervalos de retransmisión&lt;/strong&gt; adecuados para evitar congestión en mallas densas.&lt;/li&gt;
+&lt;li&gt;Documenta &lt;strong&gt;claves y canales&lt;/strong&gt; en un gestor seguro para tu equipo.&lt;/li&gt;
+&lt;li&gt;Mantén el firmware actualizado y participa en la comunidad de GitHub/Discord para aprovechar nuevas funciones.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Con esta visión podrás planear una red Meshtastic confiable y adaptarla a tus necesidades de comunicación de largo alcance.&lt;/p&gt;</description></item><item><title>Elegir la ESP32 adecuada</title><link>https://ingeniummx.github.io/posts/microcontroladores/elegir-la-esp32-adecuada/</link><pubDate>Sat, 16 Mar 2024 11:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/microcontroladores/elegir-la-esp32-adecuada/</guid><description>&lt;p&gt;La familia &lt;strong&gt;ESP32&lt;/strong&gt; de Espressif incluye docenas de variantes con diferentes radios, memoria y encapsulados. Escoger el módulo correcto evita limitaciones de memoria, consumo excesivo o falta de certificaciones inalámbricas.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="criterios-de-selección"&gt;Criterios de selección&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Conectividad inalámbrica.&lt;/strong&gt; ¿Necesitas Wi-Fi 2,4 GHz, Bluetooth LE, Classic o incluso 802.15.4?&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Memoria y almacenamiento.&lt;/strong&gt; Flash integrada (4–16 MB), PSRAM opcional para buffers gráficos o voz.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GPIO disponibles.&lt;/strong&gt; Algunos módulos comparten pines con la antena o el cristal, reduciendo los I/O libres.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Certificaciones.&lt;/strong&gt; Para productos finales busca módulos con FCC/CE y antena integrada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Consumo energético.&lt;/strong&gt; Evalúa modos de suspensión, corriente en deep sleep y voltaje operativo.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="variantes-populares"&gt;Variantes populares&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Módulo&lt;/th&gt;
+&lt;th&gt;CPU&lt;/th&gt;
+&lt;th&gt;RAM/Flash&lt;/th&gt;
+&lt;th&gt;Radios&lt;/th&gt;
+&lt;th&gt;Características clave&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-WROOM-32&lt;/td&gt;
+&lt;td&gt;Xtensa LX6 dual a 240 MHz&lt;/td&gt;
+&lt;td&gt;520 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT Classic/LE&lt;/td&gt;
+&lt;td&gt;DevkitC, amplio soporte, antena PCB.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-WROVER&lt;/td&gt;
+&lt;td&gt;Xtensa LX6 dual&lt;/td&gt;
+&lt;td&gt;520 KB + 4 MB flash + 8 MB PSRAM&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT&lt;/td&gt;
+&lt;td&gt;Ideal para gráficos, cámaras o SSL pesado.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-C3&lt;/td&gt;
+&lt;td&gt;RISC-V single 160 MHz&lt;/td&gt;
+&lt;td&gt;400 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT LE 5&lt;/td&gt;
+&lt;td&gt;Bajo consumo, pin-to-pin con ESP8266.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-S3&lt;/td&gt;
+&lt;td&gt;Xtensa LX7 dual 240 MHz&lt;/td&gt;
+&lt;td&gt;512 KB + 8 MB flash/PSRAM&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT LE 5&lt;/td&gt;
+&lt;td&gt;Vector instructions para IA, USB OTG.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-C6&lt;/td&gt;
+&lt;td&gt;RISC-V single 160 MHz&lt;/td&gt;
+&lt;td&gt;512 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi 6 + BT LE 5 + 802.15.4&lt;/td&gt;
+&lt;td&gt;Thread/Matter listo, eficiente.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="devkits-recomendados"&gt;Devkits recomendados&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-DevKitC:&lt;/strong&gt; Referencia básica para WROOM. Incluye convertidor USB-UART y fácil acceso a pines.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-S3-DevKitC-1:&lt;/strong&gt; Para proyectos de visión gracias a USB nativo y soporte para cámaras.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-C3-DevKitM-1:&lt;/strong&gt; Ideal para wearables y sensores de baja potencia.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LilyGO T-Display / T-Embed:&lt;/strong&gt; Añaden pantalla IPS, ranura microSD y batería LiPo integrada.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="consejos-prácticos"&gt;Consejos prácticos&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Define primero la pila de software.&lt;/strong&gt; ESP-IDF, Arduino Core, MicroPython o circuitos con Matter pueden requerir memoria adicional.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Revisa el pinout oficial.&lt;/strong&gt; Algunos GPIO no toleran 5 V o están reservados para arranque (GPIO0, GPIO2, GPIO15).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Planea la antena.&lt;/strong&gt; Respeta el keep-out de la PCB o el conector U.FL para no degradar la potencia.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Aprovecha los modos de bajo consumo.&lt;/strong&gt; Configura RTC, ULP y wake-up por GPIO o temporizador para aplicaciones alimentadas por batería.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Certifica tu producto.&lt;/strong&gt; Usa módulos pre-certificados y documenta las pruebas de radiofrecuencia.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Con esta matriz podrás elegir el módulo ESP32 que mejor se ajuste a tu presupuesto, consumo y requisitos de conectividad.&lt;/p&gt;</description></item></channel></rss>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Robótica on Ingenium MX</title><link>https://ingeniummx.github.io/posts/robotica/</link><description>Recent content in Robótica on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><atom:link href="https://ingeniummx.github.io/posts/robotica/index.xml" rel="self" type="application/rss+xml"/><item><title>Herramientas indispensables para ROS 2</title><link>https://ingeniummx.github.io/posts/robotica/herramientas-indispensables-para-ros-2/</link><pubDate>Sat, 16 Mar 2024 12:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/robotica/herramientas-indispensables-para-ros-2/</guid><description>&lt;p&gt;ROS 2 ofrece múltiples utilidades para monitorear tópicos, analizar logs y depurar sistemas distribuidos. Conocer las herramientas correctas acelera el desarrollo y evita perder horas persiguiendo bugs.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="línea-de-comandos"&gt;Línea de comandos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;ros2 topic&lt;/code&gt;&lt;/strong&gt;: inspecciona publicadores, suscriptores y contenido en tiempo real (&lt;code&gt;ros2 topic echo&lt;/code&gt;, &lt;code&gt;ros2 topic hz&lt;/code&gt;). Útil para validar tipos de mensajes y latencias.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;ros2 node&lt;/code&gt;&lt;/strong&gt;: lista nodos activos, interfaces y parámetros expuestos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;ros2 param&lt;/code&gt;&lt;/strong&gt;: permite leer/escribir parámetros dinámicos, ideal para ajustar PIDs o constantes sin recompilar.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;ros2 bag&lt;/code&gt;&lt;/strong&gt;: registra y reproduce mensajes DDS para depuración offline o análisis de regresiones.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="visualización-3d-con-rviz"&gt;Visualización 3D con RViz&lt;/h2&gt;
+&lt;p&gt;RViz es la navaja suiza para visualizar mapas, nubes de puntos y frames TF.&lt;/p&gt;</description></item></channel></rss>

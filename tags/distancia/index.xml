@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Distancia on Ingenium MX</title><link>https://ingeniummx.github.io/tags/distancia/</link><description>Recent content in Distancia on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Sat, 16 Mar 2024 15:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/distancia/index.xml" rel="self" type="application/rss+xml"/><item><title>Sensores ultrasónicos</title><link>https://ingeniummx.github.io/posts/sensores/sensores-ultras%C3%B3nicos/</link><pubDate>Sat, 16 Mar 2024 15:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/sensores/sensores-ultras%C3%B3nicos/</guid><description>&lt;p&gt;Los &lt;strong&gt;sensores ultrasónicos&lt;/strong&gt; miden distancia calculando el tiempo que tarda un pulso acústico en viajar y regresar desde un obstáculo. Son económicos y útiles en robótica móvil, medición de nivel y domótica.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="componentes-clave"&gt;Componentes clave&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Transductor emisor/receptor&lt;/strong&gt; piezoeléctrico (~40 kHz).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Driver&lt;/strong&gt; que genera burst de alta tensión (80–120 Vpp en modelos industriales).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Detector de eco&lt;/strong&gt; con amplificación logarítmica.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Controlador&lt;/strong&gt; que mide el tiempo de vuelo (ToF) y entrega una lectura digital o analógica.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La distancia se calcula como:&lt;/p&gt;</description></item></channel></rss>

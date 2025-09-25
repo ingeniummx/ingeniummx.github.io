@@ -4,4 +4,148 @@ Cuando los conectamos a un microcontrolador (PIC, ESP32, Arduino, etc.) esperamo
 &lt;div style="border:2px dashed #bbb; padding:28px; width:80%; height:220px; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#777;"&gt;
 &lt;strong&gt;PLACEHOLDER IMG:&lt;/strong&gt;&amp;nbsp; "button-ideal-vs-bounce.png" — Señal ideal vs con rebote
 &lt;/div&gt;
-&lt;p&gt;&lt;em&gt;Ideal vs. real: sin rebote (arriba) vs. con rebote (abajo)&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;&lt;em&gt;Ideal vs. real: sin rebote (arriba) vs. con rebote (abajo)&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Controlar un LED con ESP32 y MQTT</title><link>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</link><pubDate>Sat, 16 Mar 2024 19:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/comunicaciones/controlar-un-led-con-esp32-y-mqtt/</guid><description>&lt;p&gt;MQTT es un protocolo ligero de mensajería ideal para IoT. Con un ESP32 y un broker local o en un VPS puedes controlar actuadores desde cualquier lugar del mundo.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="preparar-el-broker"&gt;Preparar el broker&lt;/h2&gt;
+&lt;h3 id="opción-local-mosquitto"&gt;Opción local (Mosquitto)&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo apt install mosquitto mosquitto-clients
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;sudo systemctl enable --now mosquitto
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="opción-vps"&gt;Opción VPS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Contrata un VPS ligero (1 vCPU, 1 GB RAM).&lt;/li&gt;
+&lt;li&gt;Instala Mosquitto y configura autenticación básica en &lt;code&gt;/etc/mosquitto/conf.d/seguro.conf&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;allow_anonymous false
+password_file /etc/mosquitto/passwd
+listener 8883
+cafile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+keyfile /etc/letsencrypt/live/tu-dominio/privkey.pem
+certfile /etc/letsencrypt/live/tu-dominio/fullchain.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start="3"&gt;
+&lt;li&gt;Genera certificados TLS con Let’s Encrypt y crea usuarios con &lt;code&gt;mosquitto_passwd&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="firmware-esp32-arduino-core"&gt;Firmware ESP32 (Arduino core)&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;WiFi.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;#include&lt;/span&gt; &lt;span style="color:#75715e"&gt;&amp;lt;PubSubClient.h&amp;gt;&lt;/span&gt;&lt;span style="color:#75715e"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; ssid &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuRed&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; password &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;TuClave&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; mqtt_server &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;broker.tudominio.com&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; mqtt_port &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;8883&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;WiFiClientSecure espClient;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;PubSubClient &lt;span style="color:#a6e22e"&gt;client&lt;/span&gt;(espClient);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;const&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; ledPin &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;2&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;callback&lt;/span&gt;(&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;&lt;span style="color:#f92672"&gt;*&lt;/span&gt; topic, byte&lt;span style="color:#f92672"&gt;*&lt;/span&gt; payload, &lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; length) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; String mensaje;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;unsigned&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;int&lt;/span&gt; i &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;; i &lt;span style="color:#f92672"&gt;&amp;lt;&lt;/span&gt; length; i&lt;span style="color:#f92672"&gt;++&lt;/span&gt;) mensaje &lt;span style="color:#f92672"&gt;+=&lt;/span&gt; (&lt;span style="color:#66d9ef"&gt;char&lt;/span&gt;)payload[i];
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; digitalWrite(ledPin, mensaje &lt;span style="color:#f92672"&gt;==&lt;/span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;ON&amp;#34;&lt;/span&gt; &lt;span style="color:#f92672"&gt;?&lt;/span&gt; HIGH : LOW);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;reconnect&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (client.connect(&lt;span style="color:#e6db74"&gt;&amp;#34;esp32-led&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;usuario&amp;#34;&lt;/span&gt;, &lt;span style="color:#e6db74"&gt;&amp;#34;password&amp;#34;&lt;/span&gt;)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.subscribe(&lt;span style="color:#e6db74"&gt;&amp;#34;casa/sala/led&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; } &lt;span style="color:#66d9ef"&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;2000&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;setup&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; pinMode(ledPin, OUTPUT);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; Serial.begin(&lt;span style="color:#ae81ff"&gt;115200&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; WiFi.begin(ssid, password);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; (WiFi.status() &lt;span style="color:#f92672"&gt;!=&lt;/span&gt; WL_CONNECTED) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; delay(&lt;span style="color:#ae81ff"&gt;500&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; espClient.setCACert(&lt;span style="color:#e6db74"&gt;&amp;#34;-----BEGIN CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;...&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;-----END CERTIFICATE-----&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;\n&lt;/span&gt;&lt;span style="color:#e6db74"&gt;&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setServer(mqtt_server, mqtt_port);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.setCallback(callback);
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;void&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;loop&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;if&lt;/span&gt; (&lt;span style="color:#f92672"&gt;!&lt;/span&gt;client.connected()) reconnect();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; client.loop();
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Para conexiones sin TLS ajusta el puerto 1883 y elimina &lt;code&gt;setCACert&lt;/code&gt;, pero prioriza seguridad en despliegues reales.&lt;/p&gt;</description></item><item><title>Elegir la ESP32 adecuada</title><link>https://ingeniummx.github.io/posts/microcontroladores/elegir-la-esp32-adecuada/</link><pubDate>Sat, 16 Mar 2024 11:30:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/microcontroladores/elegir-la-esp32-adecuada/</guid><description>&lt;p&gt;La familia &lt;strong&gt;ESP32&lt;/strong&gt; de Espressif incluye docenas de variantes con diferentes radios, memoria y encapsulados. Escoger el módulo correcto evita limitaciones de memoria, consumo excesivo o falta de certificaciones inalámbricas.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="criterios-de-selección"&gt;Criterios de selección&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Conectividad inalámbrica.&lt;/strong&gt; ¿Necesitas Wi-Fi 2,4 GHz, Bluetooth LE, Classic o incluso 802.15.4?&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Memoria y almacenamiento.&lt;/strong&gt; Flash integrada (4–16 MB), PSRAM opcional para buffers gráficos o voz.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GPIO disponibles.&lt;/strong&gt; Algunos módulos comparten pines con la antena o el cristal, reduciendo los I/O libres.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Certificaciones.&lt;/strong&gt; Para productos finales busca módulos con FCC/CE y antena integrada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Consumo energético.&lt;/strong&gt; Evalúa modos de suspensión, corriente en deep sleep y voltaje operativo.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="variantes-populares"&gt;Variantes populares&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Módulo&lt;/th&gt;
+&lt;th&gt;CPU&lt;/th&gt;
+&lt;th&gt;RAM/Flash&lt;/th&gt;
+&lt;th&gt;Radios&lt;/th&gt;
+&lt;th&gt;Características clave&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-WROOM-32&lt;/td&gt;
+&lt;td&gt;Xtensa LX6 dual a 240 MHz&lt;/td&gt;
+&lt;td&gt;520 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT Classic/LE&lt;/td&gt;
+&lt;td&gt;DevkitC, amplio soporte, antena PCB.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-WROVER&lt;/td&gt;
+&lt;td&gt;Xtensa LX6 dual&lt;/td&gt;
+&lt;td&gt;520 KB + 4 MB flash + 8 MB PSRAM&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT&lt;/td&gt;
+&lt;td&gt;Ideal para gráficos, cámaras o SSL pesado.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-C3&lt;/td&gt;
+&lt;td&gt;RISC-V single 160 MHz&lt;/td&gt;
+&lt;td&gt;400 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT LE 5&lt;/td&gt;
+&lt;td&gt;Bajo consumo, pin-to-pin con ESP8266.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-S3&lt;/td&gt;
+&lt;td&gt;Xtensa LX7 dual 240 MHz&lt;/td&gt;
+&lt;td&gt;512 KB + 8 MB flash/PSRAM&lt;/td&gt;
+&lt;td&gt;Wi-Fi + BT LE 5&lt;/td&gt;
+&lt;td&gt;Vector instructions para IA, USB OTG.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ESP32-C6&lt;/td&gt;
+&lt;td&gt;RISC-V single 160 MHz&lt;/td&gt;
+&lt;td&gt;512 KB + 4 MB flash&lt;/td&gt;
+&lt;td&gt;Wi-Fi 6 + BT LE 5 + 802.15.4&lt;/td&gt;
+&lt;td&gt;Thread/Matter listo, eficiente.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="devkits-recomendados"&gt;Devkits recomendados&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-DevKitC:&lt;/strong&gt; Referencia básica para WROOM. Incluye convertidor USB-UART y fácil acceso a pines.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-S3-DevKitC-1:&lt;/strong&gt; Para proyectos de visión gracias a USB nativo y soporte para cámaras.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ESP32-C3-DevKitM-1:&lt;/strong&gt; Ideal para wearables y sensores de baja potencia.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LilyGO T-Display / T-Embed:&lt;/strong&gt; Añaden pantalla IPS, ranura microSD y batería LiPo integrada.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="consejos-prácticos"&gt;Consejos prácticos&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Define primero la pila de software.&lt;/strong&gt; ESP-IDF, Arduino Core, MicroPython o circuitos con Matter pueden requerir memoria adicional.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Revisa el pinout oficial.&lt;/strong&gt; Algunos GPIO no toleran 5 V o están reservados para arranque (GPIO0, GPIO2, GPIO15).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Planea la antena.&lt;/strong&gt; Respeta el keep-out de la PCB o el conector U.FL para no degradar la potencia.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Aprovecha los modos de bajo consumo.&lt;/strong&gt; Configura RTC, ULP y wake-up por GPIO o temporizador para aplicaciones alimentadas por batería.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Certifica tu producto.&lt;/strong&gt; Usa módulos pre-certificados y documenta las pruebas de radiofrecuencia.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Con esta matriz podrás elegir el módulo ESP32 que mejor se ajuste a tu presupuesto, consumo y requisitos de conectividad.&lt;/p&gt;</description></item></channel></rss>

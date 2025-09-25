@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Software on Ingenium MX</title><link>https://ingeniummx.github.io/posts/software/</link><description>Recent content in Software on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><atom:link href="https://ingeniummx.github.io/posts/software/index.xml" rel="self" type="application/rss+xml"/><item><title>Transcribir audio con Whisper</title><link>https://ingeniummx.github.io/posts/software/transcribir-audio-con-whisper/</link><pubDate>Sat, 16 Mar 2024 16:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/software/transcribir-audio-con-whisper/</guid><description>&lt;p&gt;&lt;strong&gt;Whisper&lt;/strong&gt; es un modelo de reconocimiento de voz multilingüe de código abierto creado por OpenAI. Permite transcribir audio a texto con alta precisión sin depender de servicios en la nube.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="requisitos"&gt;Requisitos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Python 3.8 o superior.&lt;/li&gt;
+&lt;li&gt;Pip y virtualenv.&lt;/li&gt;
+&lt;li&gt;FFmpeg instalado en el sistema (necesario para convertir formatos de audio).&lt;/li&gt;
+&lt;li&gt;GPU opcional (CUDA) para acelerar inferencias con modelos grandes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Instala FFmpeg en Linux con &lt;code&gt;sudo apt install ffmpeg&lt;/code&gt; o usa los binarios oficiales en Windows/macOS.&lt;/p&gt;</description></item></channel></rss>

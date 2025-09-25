@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Expansores GPIO on Ingenium MX</title><link>https://ingeniummx.github.io/tags/expansores-gpio/</link><description>Recent content in Expansores GPIO on Ingenium MX</description><generator>Hugo -- gohugo.io</generator><language>es</language><lastBuildDate>Sat, 16 Mar 2024 18:00:00 +0200</lastBuildDate><atom:link href="https://ingeniummx.github.io/tags/expansores-gpio/index.xml" rel="self" type="application/rss+xml"/><item><title>Ampliar entradas digitales con I2C</title><link>https://ingeniummx.github.io/posts/microcontroladores/ampliar-entradas-digitales-con-i2c/</link><pubDate>Sat, 16 Mar 2024 18:00:00 +0200</pubDate><guid>https://ingeniummx.github.io/posts/microcontroladores/ampliar-entradas-digitales-con-i2c/</guid><description>&lt;p&gt;Cuando el número de GPIO de la Raspberry Pi Pico no basta, puedes &lt;strong&gt;ampliar entradas digitales&lt;/strong&gt; con expansores I2C. Estos integrados entregan 8, 16 o más pines configurables sin sacrificar recursos del microcontrolador.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="expansores-populares"&gt;Expansores populares&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Chip&lt;/th&gt;
+&lt;th&gt;Bits&lt;/th&gt;
+&lt;th&gt;Voltaje&lt;/th&gt;
+&lt;th&gt;Características&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;MCP23017&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;1,8–5,5 V&lt;/td&gt;
+&lt;td&gt;Dos bancos de 8 bits, interrupciones configurables, pull-ups internos.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;PCF8575&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,5–5,5 V&lt;/td&gt;
+&lt;td&gt;Entradas/salidas quasi-bidireccionales, ideal para lectura de botones.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TCA9555&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,3–5,5 V&lt;/td&gt;
+&lt;td&gt;Interrupciones separadas, compatible con 400 kHz.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SX1509&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;2,5–3,6 V&lt;/td&gt;
+&lt;td&gt;PWM por pin, debounce interno y lógica de interrupciones avanzada.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="conexión-básica"&gt;Conexión básica&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Conecta SDA y SCL al bus I2C de la Pico (GPIO 4 y 5 por defecto) con &lt;strong&gt;pull-ups de 4,7 kΩ&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Alimenta el expansor con 3,3 V o el voltaje requerido.&lt;/li&gt;
+&lt;li&gt;Configura las direcciones mediante pines A0-A2.&lt;/li&gt;
+&lt;li&gt;Conecta pines de interrupción (INTA/INTB) a GPIO disponibles para detectar cambios sin sondeo constante.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="ejemplo-con-mcp23017-en-micropython"&gt;Ejemplo con MCP23017 en MicroPython&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;from&lt;/span&gt; machine &lt;span style="color:#f92672"&gt;import&lt;/span&gt; I2C, Pin
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;from&lt;/span&gt; mcp23017 &lt;span style="color:#f92672"&gt;import&lt;/span&gt; MCP23017
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;i2c &lt;span style="color:#f92672"&gt;=&lt;/span&gt; I2C(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;, scl&lt;span style="color:#f92672"&gt;=&lt;/span&gt;Pin(&lt;span style="color:#ae81ff"&gt;5&lt;/span&gt;), sda&lt;span style="color:#f92672"&gt;=&lt;/span&gt;Pin(&lt;span style="color:#ae81ff"&gt;4&lt;/span&gt;), freq&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;400000&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp &lt;span style="color:#f92672"&gt;=&lt;/span&gt; MCP23017(i2c, address&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;0x20&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;setup(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;, MCP23017&lt;span style="color:#f92672"&gt;.&lt;/span&gt;IN, pullup&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;setup(&lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;, MCP23017&lt;span style="color:#f92672"&gt;.&lt;/span&gt;IN, pullup&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;while&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;True&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; estado0 &lt;span style="color:#f92672"&gt;=&lt;/span&gt; exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;input(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; estado1 &lt;span style="color:#f92672"&gt;=&lt;/span&gt; exp&lt;span style="color:#f92672"&gt;.&lt;/span&gt;input(&lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;# Procesa botones&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En C/C++ utiliza la librería &lt;code&gt;hardware/i2c.h&lt;/code&gt; y escribe a los registros &lt;code&gt;IODIRA&lt;/code&gt;, &lt;code&gt;GPPUA&lt;/code&gt; y &lt;code&gt;GPIOA&lt;/code&gt;.&lt;/p&gt;</description></item></channel></rss>
